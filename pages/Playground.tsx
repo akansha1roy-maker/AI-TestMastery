@@ -1,5 +1,4 @@
-
-import React, { Component, useState, useEffect, useRef, ReactNode, ErrorInfo } from 'react';
+import React, { useState, useEffect, useRef, ReactNode, ErrorInfo } from 'react';
 import { Play, RotateCcw, AlertTriangle, Terminal as TerminalIcon, Sparkles } from 'lucide-react';
 import { generateTestAdvice } from '../services/gemini';
 import { TestLog } from '../types';
@@ -14,11 +13,14 @@ interface ErrorBoundaryState {
   error: Error | null;
 }
 
-// Fixed ErrorBoundary by using React.Component explicitly to ensure that
-// properties like setState and props are correctly inherited and recognized by the TypeScript compiler.
+// ErrorBoundary class to catch rendering errors in the playground environment.
+// Fix: Use React.Component to ensure proper inheritance and type recognition for state, setState and props.
 class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  // Using property initializer for state instead of constructor to ensure it is correctly associated with the type
-  state: ErrorBoundaryState = { hasError: false, error: null };
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    // Initializing state using the inherited state property.
+    this.state = { hasError: false, error: null };
+  }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     return { hasError: true, error };
@@ -28,18 +30,17 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     console.error("Playground Error Boundary caught an error:", error, errorInfo);
   }
 
-  // Handle retry logic to reset state and attempt re-render
-  // Added comment: Fixed inheritance visibility for setState
+  // Handle retry logic to reset state and attempt re-render.
   handleRetry = () => {
-    // Accessing setState from base Component class to clear error state
+    // Calling setState to reset error state.
     this.setState({ hasError: false, error: null });
   };
 
   render() {
-    // Accessing state from base Component class
+    // Checking state for errors.
     if (this.state.hasError) {
       return (
-        <div className="flex flex-col items-center justify-center h-[calc(100vh-64px)] bg-slate-900 text-slate-300 p-8">
+        <div className="flex flex-col items-center justify-center h-[calc(100vh-64px)] bg-slate-900 text-slate-300 p-8" data-testid="error-boundary-screen">
           <div className="bg-slate-800 p-8 rounded-2xl border border-slate-700 shadow-2xl flex flex-col items-center max-w-lg w-full text-center">
             <div className="w-16 h-16 bg-red-900/30 rounded-full flex items-center justify-center mb-6">
               <AlertTriangle className="w-8 h-8 text-red-500" />
@@ -49,6 +50,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
               Something went wrong while rendering the playground environment.
             </p>
             
+            {/* Displaying the error details from state if available. */}
             {this.state.error && (
               <div className="w-full bg-black/50 rounded-lg p-4 mb-6 text-left overflow-auto max-h-40 border border-slate-700">
                 <code className="text-xs font-mono text-red-400 break-words">
@@ -59,6 +61,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 
             <button
               onClick={this.handleRetry}
+              data-testid="error-retry-button"
               className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-all shadow-lg hover:shadow-indigo-500/25 flex items-center gap-2"
             >
               <RotateCcw className="w-4 h-4" />
@@ -69,8 +72,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
       );
     }
 
-    // Accessing props from base Component class to render children
-    // Added comment: Fixed inheritance visibility for props
+    // Accessing children from props.
     return this.props.children;
   }
 }
@@ -160,11 +162,11 @@ test('AI generated login test', async ({ page }) => {
 
   return (
     <ErrorBoundary>
-      <div className="flex flex-col h-[calc(100vh-64px)] bg-slate-900 text-slate-300">
+      <div className="flex flex-col h-[calc(100vh-64px)] bg-slate-900 text-slate-300" data-testid="playground-container" aria-busy={isRunning || isAnalyzing}>
         {/* Toolbar */}
         <div className="h-14 bg-slate-800 border-b border-slate-700 flex items-center px-4 justify-between">
           <div className="flex items-center gap-4">
-            <h2 className="text-white font-semibold flex items-center gap-2">
+            <h2 className="text-white font-semibold flex items-center gap-2" data-testid="playground-title">
               <TerminalIcon className="w-4 h-4 text-indigo-400" />
               Playwright Simulator
             </h2>
@@ -172,6 +174,7 @@ test('AI generated login test', async ({ page }) => {
           <div className="flex items-center gap-3">
             <button 
               onClick={() => {setCode('// Write your test code here...'); setLogs([]); setAiAnalysis(null);}}
+              data-testid="reset-playground-button"
               className="p-2 hover:bg-slate-700 rounded-md text-slate-400 transition-colors" title="Reset Code"
             >
               <RotateCcw className="w-4 h-4" />
@@ -179,6 +182,7 @@ test('AI generated login test', async ({ page }) => {
             <button 
               disabled={isRunning}
               onClick={runTestSimulation}
+              data-testid="run-test-button"
               className={`flex items-center gap-2 px-4 py-1.5 rounded-md font-medium text-white transition-all ${
                 isRunning ? 'bg-slate-600 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-700 shadow-lg hover:shadow-emerald-900/50'
               }`}
@@ -195,6 +199,7 @@ test('AI generated login test', async ({ page }) => {
             <div className="bg-slate-800/50 px-4 py-2 text-xs font-mono text-slate-500 border-b border-slate-700">test.spec.ts</div>
             <textarea
               value={code}
+              data-testid="playwright-editor"
               onChange={(e) => setCode(e.target.value)}
               className="flex-1 bg-slate-900 p-4 font-mono text-sm text-slate-100 resize-none focus:outline-none leading-relaxed"
               spellCheck="false"
@@ -209,6 +214,7 @@ test('AI generated login test', async ({ page }) => {
                 <button 
                   onClick={handleAskAI}
                   disabled={isAnalyzing}
+                  data-testid="ask-ai-fix-button"
                   className="flex items-center gap-1 text-indigo-400 hover:text-indigo-300 text-xs font-semibold transition-colors disabled:opacity-50"
                 >
                   <Sparkles className="w-3 h-3" />
@@ -217,13 +223,13 @@ test('AI generated login test', async ({ page }) => {
               )}
             </div>
             
-            <div className="flex-1 overflow-y-auto p-4 font-mono text-xs space-y-2">
+            <div className="flex-1 overflow-y-auto p-4 font-mono text-xs space-y-2" data-testid="console-output">
               {logs.length === 0 && !isRunning && (
                 <div className="text-slate-600 italic">Ready to execute tests...</div>
               )}
               
               {logs.map((log) => (
-                <div key={log.id} className="flex gap-2 animate-fadeIn">
+                <div key={log.id} className="flex gap-2 animate-fadeIn" data-testid={`log-entry-${log.level}`}>
                   <span className="text-slate-500">[{log.timestamp}]</span>
                   <span className={`
                     ${log.level === 'error' ? 'text-red-400' : ''}
@@ -240,7 +246,7 @@ test('AI generated login test', async ({ page }) => {
 
             {/* AI Analysis Panel */}
             {aiAnalysis && (
-               <div className="bg-slate-800 border-t border-slate-700 p-4 max-h-60 overflow-y-auto animate-slideUp">
+               <div className="bg-slate-800 border-t border-slate-700 p-4 max-h-60 overflow-y-auto animate-slideUp" data-testid="ai-analysis-panel">
                  <div className="flex items-center gap-2 mb-2 text-indigo-400 font-semibold text-sm">
                    <Sparkles className="w-4 h-4" />
                    AI Analysis

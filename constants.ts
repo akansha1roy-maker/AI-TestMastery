@@ -17,8 +17,21 @@ Playwright is Microsoft's open-source framework for reliable web testing and aut
 ## Core Capabilities
 It excels at end-to-end testing by auto-waiting for elements to be ready, handling dynamic content, and supporting mobile viewports or device emulation. Features include network interception for mocking APIs, screenshot/video capture for debugging, and parallel test execution to speed up suites.
 
-## Language Support and Setup
-Available in JavaScript/TypeScript, Python, Java, and .NET, installation is straightforward via npm, pip, or similar managers—e.g., \`npm init playwright@latest\`. Tests run in headless mode for CI/CD pipelines or headed for visual debugging.
+## Background Execution with MCP
+To run Playwright MCP in the background for AI tools like Cursor or Gemini, you can configure it as a persistent server. This allows AI agents to "see" your browser and execute tests without manual intervention.
+
+### Configuration for Cursor/VS Code
+Add the following to your MCP settings (usually \`mcp-config.json\` or via the IDE UI):
+\`\`\`json
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest", "--isolated"]
+    }
+  }
+}
+\`\`\`
 
 ## Advantages Over Competitors
 Unlike Selenium's flakiness from timing issues, Playwright's direct browser control reduces failures by 50-80% in many cases. It's free, actively maintained on GitHub, and integrates with tools like Jest, pytest, or Playwright Test runner for assertions and reporting.
@@ -96,8 +109,6 @@ Cursor, the AI-first code editor, has native support for MCP. By setting up a "Q
     features: ['Natural Language Actions', 'Data Extraction', 'Self-Healing', 'Playwright Compatible'],
     link: '/tools/stagehand',
     relatedCourseId: 'intro-to-stagehand',
-    docLink: 'https://www.stagehand.dev/',
-    repoLink: 'https://github.com/browserbase/stagehand',
     summaryContent: `
 ## What is Stagehand?
 
@@ -242,41 +253,42 @@ export const COURSES: Course[] = [
 - Think of Gemini as “the brain” that understands your natural language and test goals.
 - Think of Playwright MCP as “the hands and eyes” that actually open the browser, click, type, and read the page for Gemini.
 ` 
-          },
-          { 
-            id: 'pw-l1', 
-            title: 'Installation & Setup',
+          }
+        ]
+      },
+      {
+        id: 'pw-mcp-bg',
+        title: 'Advanced: Background MCP Configuration',
+        lessons: [
+          {
+            id: 'pw-l-bg-1',
+            title: 'Running MCP as a Background Process',
             duration: '20 min',
             content: `
-## Initial Setup
+## Why run in the background?
+By running Playwright MCP as a persistent background process, you enable AI agents (like those in Cursor or Gemini) to access your browser state instantly, without the overhead of starting a new process for every single tool call.
 
-Playwright is designed to be easy to install and configure.
+## Configuration Steps
+1. **Locate your MCP Config**: For Cursor/VS Code, this is often found in settings or a dedicated \`mcp-config.json\`.
+2. **Add the Server**:
+\`\`\`json
+{
+  "mcpServers": {
+    "playwright-bg": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"],
+      "env": {
+        "DEBUG": "playwright:*"
+      }
+    }
+  }
+}
+\`\`\`
+3. **Persistent State**: Use the \`--isolated=false\` flag if you want the AI to share the same browser session across different prompts.
 
-### Project Initialization
-
-Run the following command in your terminal:
-\`npm init playwright@latest\`
-
-This will prompt you to:
-1. Choose between TypeScript or JavaScript (Select TypeScript).
-2. Name of your Tests folder (default: tests).
-3. Add a GitHub Actions workflow (Yes).
-4. Install Playwright browsers (Yes).
-
-### Configuration
-
-The \`playwright.config.ts\` file is where you configure your test runs. You can set:
-- \`testDir\`: Where your tests are located.
-- \`fullyParallel\`: Run tests in parallel.
-- \`use\`: Global settings like \`baseURL\`, \`trace\`, and browser settings.
-
-### Running Tests
-
-- Run all tests: \`npx playwright test\`
-- Run a specific file: \`npx playwright test tests/example.spec.ts\`
-- Run in headed mode: \`npx playwright test --headed\`
-- Show report: \`npx playwright show-report\`
-            `
+## Security Considerations
+When running a background browser server, ensure you are not exposing sensitive session data. Use dedicated test profiles whenever possible.
+`
           }
         ]
       }
@@ -316,25 +328,6 @@ It acts as a bridge between the deterministic reliability of Playwright and the 
 - **\`extract(schema)\`**: Pulls structured data (e.g., JSON) from pages using simple schemas, ideal for scraping tables or forms.
 - **\`observe("query")\`**: Analyzes elements semantically, e.g., "find the product price near the add-to-cart button."
 - **\`agent()\`**: Chains multi-step tasks into autonomous workflows with retries and self-healing.
-`
-          }
-        ]
-      },
-      {
-        id: 'mod-sh-2',
-        title: 'Configuration',
-        lessons: [
-          {
-            id: 'l-sh-3',
-            title: 'Setup and Integration',
-            duration: '20 min',
-            content: `
-## Setup and Integration
-
-- **Install**: \`npm install stagehand\` (Node.js/TypeScript focus).
-- **Usage**: Attach to a Playwright \`page\` object, e.g., \`const stagehand = new Stagehand(page);\`.
-- **Modes**: Local headless, visual debugging, or cloud via Browserbase for scaling.
-- **Tools**: Works with Jest, pytest, CrewAI; supports mocks, screenshots, videos, and parallel runs.
 `
           }
         ]
@@ -435,120 +428,201 @@ Start small, iterate prompts; persistent profiles retain logins for real-world f
     `
   },
   {
-    id: 'ai-driven-qa',
-    title: 'The Shift to AI-Driven QA',
-    excerpt: 'How Large Language Models are transforming the way we write, maintain, and execute automated tests.',
-    date: 'March 15, 2024',
+    id: 'playwright-slow-ui-mcp',
+    title: 'How to resolve slow UI tests using Playwright MCP',
+    excerpt: 'Master the art of handling high-latency APIs and dynamic frontend re-renders using Playwright MCP. Learn strategies for resilient, production-grade automation that survives slow UI conditions.',
+    date: 'June 5, 2024',
     author: 'Elena Fisher',
-    readTime: '5 min',
-    category: 'Strategy',
-    content: `
-## The New Era of Quality Assurance
-
-Gone are the days of brittle XPath selectors and endless maintenance of Selenium scripts. AI is introducing a paradigm shift: **Intent-based testing**.
-
-### From Selectors to Semantics
-
-Traditional automation relies on DOM structure (IDs, classes). If a developer changes a class name, the test breaks. AI agents, however, "see" the page like a human. They look for "The Login Button" regardless of its underlying markup.
-
-### Self-Healing Tests
-
-Modern tools can automatically detect when a selector fails and attempt to find the element using alternative attributes or visual matching, updating the test code in real-time.
-
-## Conclusion
-
-Embracing AI doesn't mean replacing QA engineers. It means elevating them to "Quality Architects" who design strategies rather than fixing broken scripts.
-    `
-  },
-  {
-    id: 'playwright-vs-cypress',
-    title: 'Playwright vs Cypress: 2024 Edition',
-    excerpt: 'A detailed comparison of the two leading automation frameworks and why Playwright is winning.',
-    date: 'April 02, 2024',
-    author: 'Marcus Chen',
     readTime: '8 min',
     category: 'Playwright',
     content: `
-## Speed and Stability
+# How to resolve slow UI tests using Playwright MCP
 
-Playwright uses the Chrome DevTools Protocol (CDP) to communicate directly with the browser, offering faster execution and greater stability compared to Cypress's in-browser execution model.
+AI Agent Prompt – Playwright Slow UI Handling
+You are a senior QA automation engineer specializing in Playwright and AI-driven testing.
 
-## Browser Support
+When generating or executing Playwright tests, you must assume that:
+- UI elements may load slowly
+- APIs may respond with high latency
+- Frontend frameworks may re-render DOM nodes dynamically
 
-Playwright supports all modern rendering engines (Chromium, WebKit, Firefox) with a single API. Cypress has historically struggled with full multi-browser support, especially WebKit.
+Your responsibilities:
+1. NEVER use fixed waits (waitForTimeout) unless explicitly required.
+2. Always prefer condition-based waits:
+   - waitForLoadState('domcontentloaded' or 'networkidle')
+   - expect(locator).toBeVisible / toBeEnabled / toHaveText with extended timeouts
+3. Detect whether a failure is caused by:
+   - Network latency
+   - Backend API delays
+   - Frontend rendering or hydration issues
+   - Incorrect selector strategy
+4. Implement smart waiting strategies:
+   - Retryable locators
+   - Polling using expect.poll()
+   - Waiting for stable UI state before interaction
+5. Log diagnostic data automatically when slowness is detected:
+   - Network request timing
+   - Screenshot and trace on failure
+   - DOM snapshot before and after wait
+6. Adapt timeouts dynamically:
+   - Increase timeouts only for specific slow components
+   - Do NOT globally increase default timeout unless justified
+7. If an element is replaced or re-rendered:
+   - Re-locate the element before interaction
+   - Avoid storing stale element handles
+8. Clearly report:
+   - Whether the issue is test-flakiness or actual application performance degradation
+   - Suggestions for frontend or backend optimization if applicable
 
-## Parallelization
-
-Playwright offers free, unlimited parallelization on your own machine. Cypress charges for this feature via their cloud service.
-
-## Verdict
-
-For modern, complex web applications, Playwright provides a more robust and flexible foundation for scaling your test suites.
+Always generate resilient, production-grade Playwright code that remains stable under high load and slow UI conditions.
     `
   },
   {
-    id: 'visual-regression-ai',
-    title: 'Visual Regression in the AI Era',
-    excerpt: 'Pixel-perfect matching is brittle. Learn how AI-powered visual testing ignores dynamic content while catching real UI bugs.',
-    date: 'April 10, 2024',
-    author: 'Sarah Jenkins',
-    readTime: '6 min',
+    id: 'manual-vs-ai-evolution',
+    title: 'How does AI Testing differ from Manual Testing?',
+    excerpt: 'Software testing is no longer just about clicking buttons and verifying expected outcomes. Explore the key differences and why the future lies in combining both approaches.',
+    date: 'November 18, 2024',
+    author: 'Alex Rivera',
+    readTime: '8 min',
     category: 'Strategy',
     content: `
-## The Problem with Pixel Matching
+# AI Testing vs Manual Testing: How Software Quality Is Evolving
 
-Traditional visual testing tools compare screenshots pixel-by-pixel. If a single pixel shifts due to rendering differences or dynamic data (like dates), the test fails. This creates "noise" and fatigue.
+Software testing is no longer just about clicking buttons and verifying expected outcomes. With faster release cycles, complex applications, and continuous delivery pipelines, traditional manual testing alone is struggling to keep up. This is where AI-driven testing is changing the game.
 
-## AI to the Rescue
+In this article, we’ll explore how AI testing differs from manual testing, where each approach shines, and why the future of quality assurance lies in combining both.
 
-Modern AI Visual tools (like Applitools or Percy's AI mode) analyze the *structure* and *content* of the page.
+## What Is Manual Testing?
+Manual testing is the traditional approach where human testers execute test cases by hand. Testers explore the application, validate functionality, report defects, and ensure the product meets business requirements.
 
-### Layout vs. Content
-They can distinguish between:
-*   **Layout changes:** The button moved 50px to the left (Bug?)
-*   **Content changes:** The "Latest News" text changed (Expected)
-*   **Dynamic regions:** Ads or rotating banners (Ignore)
+Manual testing relies heavily on:
+* Human judgment
+* Experience and intuition
+* Exploratory skills
+* Domain knowledge
 
-## Implementation in Playwright
+It has been the backbone of software quality for decades — and it’s still valuable today.
 
-\`\`\`typescript
-import { test, expect } from '@playwright/test';
+## What Is AI Testing?
+AI testing uses artificial intelligence, machine learning, and intelligent automation to design, execute, and maintain tests automatically. Instead of relying solely on predefined scripts, AI systems learn from application behavior, user patterns, and historical test results.
 
-test('AI visual check', async ({ page }) => {
-  await page.goto('https://example.com');
-  // Instead of standard toHaveScreenshot()
-  await aiVisualCheck(page, 'Homepage'); 
-});
-\`\`\`
-    `
-  },
-  {
-    id: 'llms-test-data',
-    title: 'Generating Synthetic Test Data with LLMs',
-    excerpt: 'Stop using static JSON files. Use LLMs to generate diverse, edge-case rich user data on the fly for your test suites.',
-    date: 'April 18, 2024',
-    author: 'David Ross',
-    readTime: '4 min',
-    category: 'AI Agents',
-    content: `
-## The Data Problem
+Modern AI testing can:
+* Generate test cases automatically
+* Adapt to UI and code changes
+* Heal broken locators
+* Prioritize high-risk tests
+* Run continuously without manual intervention
 
-Testing is only as good as the data you feed it. Using the same 'John Doe' user for every test hides bugs related to:
-*   Long names
-*   Special characters
-*   International addresses
+In short, AI testing shifts QA from reactive testing to intelligent, adaptive quality engineering.
 
-## Using Gemini for Data Gen
+## Test Creation and Maintenance
+One of the biggest differences between manual and AI testing is how tests are created and maintained.
+Manual test cases are written by testers and must be updated whenever the application changes. Even small UI updates can require significant rework.
+AI testing, on the other hand, can auto-generate tests and adapt when the application evolves. Self-healing mechanisms allow tests to survive UI changes with minimal human intervention.
 
-You can use the Gemini API to generate a JSON array of users with specific characteristics during your test setup.
+Manual tests are static. AI tests are dynamic.
 
-### Example Prompt
-"Generate 5 user profiles for a banking app. One should be a minor, one should have a very long name, and one should have an address with non-ASCII characters."
+## Speed, Scale, and Coverage
+Manual testing is inherently slow. Testers can only execute a limited number of test cases, and repetitive testing often leads to fatigue and missed defects.
+AI testing excels at scale:
+* Thousands of tests can run in minutes
+* Tests can execute 24/7
+* Cross-browser and cross-device coverage becomes effortless
+* Regression testing no longer blocks releases
 
-### Integration
+This makes AI testing ideal for CI/CD pipelines and fast-paced development teams.
 
-Call this API in your \`globalSetup\` or \`beforeAll\` hook in Playwright, seed your test database, and run your tests against this fresh, diverse data.
-    `
+## Handling Application Changes
+Applications change constantly — layouts shift, APIs evolve, and user flows are updated.
+Manual testing requires testers to:
+* Re-learn workflows
+* Rewrite test cases
+* Update documentation
+
+AI testing systems can detect changes automatically and adapt test execution accordingly. With tools like Playwright combined with AI agents, tests become far more resilient and less flaky.
+
+## Accuracy and Consistency
+Human testers are excellent at spotting subtle issues, but they are also prone to:
+* Fatigue
+* Inconsistencies
+* Interpretation differences
+
+AI testing delivers:
+* Perfect repeatability
+* Consistent execution
+* Zero human error during runs
+
+While humans bring insight, AI brings precision and reliability.
+
+## Where Manual Testing Still Wins
+Despite its limitations, manual testing is irreplaceable in certain areas:
+* Exploratory testing
+* Usability and UX evaluation
+* Visual and aesthetic judgment
+* Early-stage product validation
+* Creative edge-case discovery
+
+Humans understand context in ways machines still cannot.
+
+## Where AI Testing Excels
+AI testing shines in areas that demand scale and speed:
+* Regression testing
+* Performance and load testing
+* Cross-platform validation
+* Continuous testing in CI/CD
+* Test optimization and prioritization
+
+AI doesn’t get tired — and it doesn’t forget.
+
+## Learning and Intelligence
+Manual testing knowledge lives mostly in people’s heads and documentation. When testers leave, experience often leaves with them.
+AI testing systems retain and build knowledge over time by learning from:
+* Past failures
+* Code changes
+* User behavior
+* Production data
+
+This allows AI testing to become predictive, identifying risk areas before failures occur.
+
+## Cost and Long-Term ROI
+Manual testing has a low entry cost but high long-term maintenance costs. As the product grows, testing effort grows linearly — or worse.
+AI testing requires upfront investment in tools, setup, and skills, but the long-term return is significant:
+* Lower maintenance costs
+* Faster releases
+* Reduced production defects
+* Better quality at scale
+
+## Skills: The Tester’s Role Is Evolving
+Manual testers traditionally focus on execution.
+AI testers focus on strategy.
+Modern QA professionals need:
+* Strong testing fundamentals
+* Automation and tool expertise (Playwright, Cypress, etc.)
+* Understanding of AI agents and intelligent frameworks
+* Analytical and systems thinking
+* Prompt engineering skills
+
+The role is evolving from “tester” to “quality engineer.”
+
+## Limitations of AI Testing
+AI testing is powerful, but not perfect:
+* It needs good training data
+* Poor configuration can miss edge cases
+* It cannot fully replace human intuition
+* It still requires oversight and governance
+
+AI is a force multiplier — not a silver bullet.
+
+## Final Thoughts: The Future of Testing
+Manual testing is human-driven, insightful, and creative — but limited in scale.
+AI testing is adaptive, fast, and scalable — but lacks human judgment.
+
+The future of software quality is not one or the other.
+It is:
+**AI-powered automation guided by human intelligence**
+
+Teams that embrace this balance will ship faster, break less, and build better software.
+`
   }
 ];
 
@@ -604,13 +678,19 @@ export const INTERVIEW_QUESTIONS: InterviewQuestion[] = [
   {
     id: 'q9',
     question: 'Walk through setting up Playwright MCP in VS Code and a sample AI prompt workflow.',
-    answer: 'Add to settings.json: `{"mcpServers": {"playwright": {"command": "npx", "args": ["@playwright/mcp@latest"]}}}`. Restart VS Code, then prompt: "Navigate to example.com, click \'Submit\', and snapshot." The agent chains tools like `browser_navigate` and `browser_snapshot` automatically.',
+    answer: 'Add to settings.json: `{"mcpServers": {"playwright": {"command": "npx", "args": ["@playwright/mcp@latest"]}}}`. Restart VS Code, then prompt: "Navigate to example.com, click \'Submit\', and snapshot." The agent chains tools like \`browser_navigate\` and \`browser_snapshot\` automatically.',
     category: 'MCP'
   },
   {
     id: 'q10',
     question: 'Compare Playwright MCP to manual Playwright scripting for test generation.',
-    answer: 'MCP lets AI auto-generate tests via `browser_generate_playwright_test` from exploration, handling locators semantically. Manual coding needs explicit selectors and waits, making it slower for beginners or exploratory tasks but more precise for complex logic.',
+    answer: 'MCP lets AI auto-generate tests via \`browser_generate_playwright_test\` from exploration, handling locators semantically. Manual coding needs explicit selectors and waits, making it slower for beginners or exploratory tasks but more precise for complex logic.',
     category: 'Playwright'
+  },
+  {
+    id: 'q11',
+    question: 'If the UI elements of a page takes time to load or respond then how will the Playwright MCP work around it?',
+    answer: 'Instead of increasing timeouts blindly, I diagnose whether the delay is caused by frontend rendering, backend latency, or poor waiting strategies, and then apply intent-based waits and adaptive retries using Playwright.',
+    category: 'MCP'
   }
 ];

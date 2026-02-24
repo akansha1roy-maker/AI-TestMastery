@@ -54,10 +54,10 @@ const Navbar: React.FC = () => {
   };
 
   const navLinks = [
-    { name: 'Blog', path: '/blog', icon: <PenTool className="w-4 h-4 mr-2" /> },
-    { name: 'Tools', path: '/tools', icon: <Terminal className="w-4 h-4 mr-2" /> },
-    { name: 'Playground', path: '/playground', icon: <Play className="w-4 h-4 mr-2" /> },
-    { name: 'Prep', path: '/prep', icon: <BookOpen className="w-4 h-4 mr-2" /> },
+    { id: 'blog', name: 'Blog', path: '/blog', icon: <PenTool className="w-4 h-4 mr-2" /> },
+    { id: 'tools', name: 'Tools', path: '/tools', icon: <Terminal className="w-4 h-4 mr-2" /> },
+    { id: 'playground', name: 'Playground', path: '/playground', icon: <Play className="w-4 h-4 mr-2" /> },
+    { id: 'prep', name: 'Prep', path: '/prep', icon: <BookOpen className="w-4 h-4 mr-2" /> },
   ];
 
   const isActive = (path: string) => location.pathname.startsWith(path);
@@ -68,12 +68,14 @@ const Navbar: React.FC = () => {
     return <Monitor className="w-5 h-5" />;
   };
 
+  const themeLabel = theme === 'system' ? 'Device' : theme.charAt(0).toUpperCase() + theme.slice(1);
+
   return (
-    <nav className="sticky top-0 z-50 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-white/20 dark:border-white/10 shadow-sm transition-all duration-300 supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-slate-900/60">
+    <nav className="sticky top-0 z-50 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-white/20 dark:border-white/10 shadow-sm transition-all duration-300 supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-slate-900/60" data-testid="navbar">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link to="/" className="flex-shrink-0 flex items-center gap-2 group">
+            <Link to="/" className="flex-shrink-0 flex items-center gap-2 group" data-testid="logo-link">
               <div className="w-8 h-8 bg-indigo-600/90 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/30 group-hover:scale-105 transition-transform">
                 <Bot className="text-white w-5 h-5" />
               </div>
@@ -86,6 +88,7 @@ const Navbar: React.FC = () => {
               <Link
                 key={link.name}
                 to={link.path}
+                data-testid={`nav-link-${link.id}`}
                 className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                   isActive(link.path)
                     ? 'text-indigo-600 dark:text-indigo-300 bg-indigo-50/50 dark:bg-indigo-500/10 shadow-[inset_0_0_0_1px_rgba(79,70,229,0.1)] dark:shadow-[inset_0_0_0_1px_rgba(129,140,248,0.2)]'
@@ -101,17 +104,19 @@ const Navbar: React.FC = () => {
 
             <button
               onClick={toggleTheme}
+              data-testid="theme-toggle"
               className="p-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-white/50 dark:hover:bg-white/5 rounded-full transition-all flex items-center gap-1 group relative"
               aria-label="Toggle Theme"
             >
               <ThemeIcon />
               <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-slate-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none capitalize">
-                Theme: {theme}
+                {themeLabel} Mode
               </span>
             </button>
 
             <Link
               to="/playground"
+              data-testid="nav-cta-playground"
               className="hidden lg:flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-all shadow-md hover:shadow-indigo-500/30 ml-2"
             >
               Try Playground
@@ -121,12 +126,14 @@ const Navbar: React.FC = () => {
           <div className="flex items-center gap-4 md:hidden">
             <button
               onClick={toggleTheme}
+              data-testid="theme-toggle-mobile"
               className="p-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400"
             >
               <ThemeIcon />
             </button>
             <button
               onClick={() => setIsOpen(!isOpen)}
+              data-testid="mobile-menu-toggle"
               className="text-slate-600 dark:text-slate-300 hover:text-indigo-600 focus:outline-none"
             >
               {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -142,12 +149,14 @@ const Navbar: React.FC = () => {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-white/20 dark:border-white/10 overflow-hidden"
+            data-testid="mobile-menu"
           >
             <div className="px-4 pt-2 pb-4 space-y-2">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.path}
+                  data-testid={`mobile-nav-link-${link.id}`}
                   onClick={() => setIsOpen(false)}
                   className={`block px-4 py-3 rounded-xl text-base font-medium transition-colors ${
                     isActive(link.path)
@@ -163,6 +172,7 @@ const Navbar: React.FC = () => {
               ))}
               <Link
                 to="/playground"
+                data-testid="mobile-nav-cta-playground"
                 onClick={() => setIsOpen(false)}
                 className="block w-full text-center px-4 py-3 mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl shadow-lg shadow-indigo-500/20 transition-all"
               >
