@@ -766,6 +766,165 @@ Whether you’re in manual testing today or already a test automation engineer, 
 In short:
 AI doesn’t replace testers — it empowers them to focus on strategy, creativity, and high-value assurance — while automation powered by AI handles the repetitive, data-intensive work. 
 `
+  },
+  {
+    id: 'beginners-guide-api-testing-playwright',
+    title: 'Beginner’s Guide to API Testing with Playwright',
+    excerpt: 'API testing is one of the core pillars of software quality assurance. It allows you to verify backend services (APIs) — independently and reliably — before or alongside UI testing.',
+    date: 'February 27, 2026',
+    author: 'Community Contributor',
+    readTime: '6 min',
+    category: 'Playwright',
+    content: `
+Using Playwright CLI and Playwright MCP (Model Context Protocol)
+API testing is one of the core pillars of software quality assurance. It allows you to verify backend services (APIs) — independently and reliably — before or alongside UI testing.
+Playwright is a modern automation and test framework from Microsoft. While its roots are in browser automation, it also includes first-class API testing support. Additionally, newer tools like Playwright MCP are emerging that let AI agents interact with Playwright in natural language.
+
+## 📌 Table of Contents
+1. What is Playwright & Playwright API Testing?
+2. Prerequisites (Tools You Need)
+3. API Testing with Playwright CLI
+   a. Setting Up a Playwright Project
+   b. Writing API Tests Using Playwright’s APIRequestContext
+   c. Running API Tests Via Playwright CLI
+   d. Example API Test: GET & POST
+4. API Testing with Playwright MCP
+   a. What is Playwright MCP?
+   b. Setting Up Playwright MCP
+   c. Using Playwright MCP for API Testing
+   d. Tips & Caveats
+5. Playwright CLI vs Playwright MCP – Key Differences
+6. Final Thoughts
+
+## 1. What is Playwright & Playwright API Testing?
+Playwright is an open-source framework developed by Microsoft for robust browser automation and end-to-end (E2E) testing across modern browsers. 
+Playwright supports API testing via a built-in request module — the \`APIRequestContext\` — which enables making HTTP requests (GET, POST, PUT, DELETE, etc.) directly in your tests — without ever loading a browser. 
+This means you can verify REST API endpoints, check response formats, status codes, or prepare backend state before UI tests run.
+
+## 2. Prerequisites (Tools You Need)
+Before you begin:
+a. Node.js (version 18 or higher)
+b. A terminal/command prompt
+c. Basic experience with JavaScript/TypeScript
+d. A Playwright project skeleton (created in your workspace)
+
+## 3. API Testing Using Playwright CLI
+Playwright’s CLI lets you run tests and execute API-focused test suites. It’s the traditional way most testers work with Playwright.
+
+### a. Setting Up a Playwright Project
+1. Initialize a new Playwright project
+\`\`\`bash
+npm init playwright@latest
+\`\`\`
+Follow the prompts to set up your project. This creates a \`tests/\` folder and a \`playwright.config.ts\` file. 
+2. Install dependencies
+\`\`\`bash
+npm install
+npx playwright install
+\`\`\`
+This installs browser binaries needed by Playwright. 
+
+### b. Writing API Tests Using APIRequestContext
+Playwright’s \`APIRequestContext\` gives you a request object similar to libraries like Axios/Fetch. 
+Here’s a sample file \`tests/api.spec.ts\`:
+\`\`\`typescript
+import { test, expect } from '@playwright/test';
+
+test('GET request returns a valid response', async ({ request }) => {
+  const response = await request.get('/users');
+  expect(response.status()).toBe(200);
+  const body = await response.json();
+  expect(body).toBeDefined();
+});
+
+test('POST request creates resource', async ({ request }) => {
+  const response = await request.post('/users', {
+    data: { name: 'John Doe' },
+  });
+  expect(response.status()).toBe(201);
+});
+\`\`\`
+Playwright will respect any global settings you configured in \`playwright.config.ts\` for base URLs and headers. 
+
+### c. Running API Tests Via Playwright CLI
+To run your API tests:
+\`\`\`bash
+npx playwright test tests/api.spec.ts
+\`\`\`
+To run all tests:
+\`\`\`bash
+npx playwright test
+\`\`\`
+Playwright’s test runner will output pass/fail results and can generate HTML reports. 
+
+### d. Example API Test Flow
+
+|Step|Playwright Action|
+|---|---|
+|Setup|Configure base URL & headers|
+|Act|Issue GET/POST/PUT requests|
+|Assert|Validate status codes & response body|
+|Cleanup|Reset state or delete created entities|
+
+This mirrors how most API test frameworks operate — but directly integrated with Playwright’s test runner.
+
+## 4. API Testing with Playwright MCP
+Playwright MCP is a newer tool in the ecosystem and is designed to work with LLM (AI) agents to automate tasks via natural language — potentially including API testing.
+
+### a. What is Playwright MCP?
+MCP stands for Model Context Protocol — a protocol that lets AI agents like Claude, Copilot, or other MCP clients interact with Playwright. It exposes Playwright tools as a service where agents can control browsers or make HTTP calls via prompts and even generate test scripts. 
+Think of it as a server that translates natural language into test actions executed by Playwright.
+
+### b. Setting Up Playwright MCP
+1. Install an MCP server for Playwright:
+You can add the Playwright MCP server in a compatible client (e.g., VS Code with MCP extension, Claude Desktop, Cursor, or similar). The basic MCP configuration for Playwright looks like:
+\`\`\`json
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"]
+    }
+  }
+}
+\`\`\`
+This tells your MCP client to run the Playwright MCP server locally. 
+2. Run the MCP server
+Start your MCP client and attach it to the Playwright MCP server. This makes the Playwright tools callable by the AI agent.
+
+### c. Using Playwright MCP for API Testing
+With MCP, you can:
+✔ Ask natural language helpers to send HTTP requests (GET, POST, etc.)
+✔ Validate responses using LLM conversational validation
+✔ Extract data and reuse in chained calls
+✔ One-shot generation of API tests without manually writing scripts 
+For example, you could prompt your AI assistant with:
+“Send a GET request to /api/users and validate the status is 200”
+and the agent combined with the MCP server will interpret and execute it.
+However — this is not the official or standard Playwright way to write API tests, and depends on external tooling integration (LLMs + MCP). It’s experimental and evolving. 
+
+### d. Tips & Caveats with Playwright MCP
++ Great for rapid prototyping without code
++ Helps non-developers explore tests in plain language
+- Less deterministic than conventional code tests
+- Relies on external models (LLMs) and may require careful prompt engineering
+
+## 5. Playwright CLI vs Playwright MCP — Key Differences
+
+|Feature|Playwright CLI|Playwright MCP|
+|---|---|---|
+|Primary Purpose|Code-based API & UI testing via test runner|Natural language driven automation|
+|Learning Curve|Beginner to advanced coding|Very beginner (prompts)|
+|Reliability|Deterministic, code-based|AI-dependent (may vary)|
+|Integration|Works standalone|Works with AI clients (Claude, Copilot, etc.)|
+|Best For|Traditional automation suites|Rapid explorative testing|
+|Standard Support|Fully official Playwright docs|Emerging AI-MCP tooling|
+
+## Final Thoughts
+• Playwright CLI is the official and robust way to do API testing — using code, request contexts, and test runner integration. 
+• Playwright MCP puts an AI-layer on top, letting you describe test intentions in natural language, which is exciting but not yet the foundational way for reliable regression suites.
+If you are a beginner, start with Playwright CLI API testing to learn core concepts. Once comfortable, you can explore Playwright MCP for AI-assisted workflows.
+`
   }
 ];
 
