@@ -1,0 +1,6 @@
+﻿pages/Playground.tsx(22,10): error TS2339: Property 'state' does not exist on type 'ErrorBoundary'.
+pages/Playground.tsx(36,10): error TS2339: Property 'setState' does not exist on type 'ErrorBoundary'.
+pages/Playground.tsx(41,14): error TS2339: Property 'state' does not exist on type 'ErrorBoundary'.
+pages/Playground.tsx(54,19): error TS2339: Property 'state' does not exist on type 'ErrorBoundary'.
+pages/Playground.tsx(57,25): error TS2339: Property 'state' does not exist on type 'ErrorBoundary'.
+pages/Playground.tsx(76,17): error TS2339: Property 'props' does not exist on type 'ErrorBoundary'.

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, ReactNode, ErrorInfo } from 'react';
+import React, { Component, useState, useEffect, useRef, ReactNode, ErrorInfo } from 'react';
 import { Play, RotateCcw, AlertTriangle, Terminal as TerminalIcon, Sparkles } from 'lucide-react';
 import { generateTestAdvice } from '../services/gemini';
 import { TestLog } from '../types';
@@ -14,8 +14,10 @@ interface ErrorBoundaryState {
 }
 
 // ErrorBoundary class to catch rendering errors in the playground environment.
-// Fix: Use React.Component to ensure proper inheritance and type recognition for state, setState and props.
-class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+// Fix: Use Component to ensure proper inheritance and type recognition for state, setState and props.
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  state: ErrorBoundaryState;
+
   constructor(props: ErrorBoundaryProps) {
     super(props);
     // Initializing state using the inherited state property.
@@ -49,7 +51,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
             <p className="text-slate-400 mb-6">
               Something went wrong while rendering the playground environment.
             </p>
-            
+
             {/* Displaying the error details from state if available. */}
             {this.state.error && (
               <div className="w-full bg-black/50 rounded-lg p-4 mb-6 text-left overflow-auto max-h-40 border border-slate-700">
@@ -136,21 +138,21 @@ test('AI generated login test', async ({ page }) => {
       }
 
       const step = steps[currentStep];
-      setLogs(prev => [...prev, { 
-        id: Date.now(), 
-        timestamp: new Date().toLocaleTimeString(), 
-        level: step.level as any, 
-        message: step.msg 
+      setLogs(prev => [...prev, {
+        id: Date.now(),
+        timestamp: new Date().toLocaleTimeString(),
+        level: step.level as any,
+        message: step.msg
       }]);
 
       currentStep++;
-    }, 1000); 
+    }, 1000);
   };
 
   const handleAskAI = async () => {
     if (logs.length === 0) return;
     setIsAnalyzing(true);
-    
+
     // Find the error log
     const errorLog = logs.find(l => l.level === 'error');
     const errorMsg = errorLog ? errorLog.message : "No explicit error found in logs, but test failed.";
@@ -172,20 +174,19 @@ test('AI generated login test', async ({ page }) => {
             </h2>
           </div>
           <div className="flex items-center gap-3">
-            <button 
-              onClick={() => {setCode('// Write your test code here...'); setLogs([]); setAiAnalysis(null);}}
+            <button
+              onClick={() => { setCode('// Write your test code here...'); setLogs([]); setAiAnalysis(null); }}
               data-testid="reset-playground-button"
               className="p-2 hover:bg-slate-700 rounded-md text-slate-400 transition-colors" title="Reset Code"
             >
               <RotateCcw className="w-4 h-4" />
             </button>
-            <button 
+            <button
               disabled={isRunning}
               onClick={runTestSimulation}
               data-testid="run-test-button"
-              className={`flex items-center gap-2 px-4 py-1.5 rounded-md font-medium text-white transition-all ${
-                isRunning ? 'bg-slate-600 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-700 shadow-lg hover:shadow-emerald-900/50'
-              }`}
+              className={`flex items-center gap-2 px-4 py-1.5 rounded-md font-medium text-white transition-all ${isRunning ? 'bg-slate-600 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-700 shadow-lg hover:shadow-emerald-900/50'
+                }`}
             >
               <Play className="w-4 h-4" />
               {isRunning ? 'Running...' : 'Run Test'}
@@ -211,7 +212,7 @@ test('AI generated login test', async ({ page }) => {
             <div className="bg-slate-800/50 px-4 py-2 text-xs font-mono text-slate-500 border-b border-slate-700 flex justify-between items-center">
               <span>Console Output</span>
               {logs.some(l => l.level === 'error') && !isRunning && (
-                <button 
+                <button
                   onClick={handleAskAI}
                   disabled={isAnalyzing}
                   data-testid="ask-ai-fix-button"
@@ -222,12 +223,12 @@ test('AI generated login test', async ({ page }) => {
                 </button>
               )}
             </div>
-            
+
             <div className="flex-1 overflow-y-auto p-4 font-mono text-xs space-y-2" data-testid="console-output">
               {logs.length === 0 && !isRunning && (
                 <div className="text-slate-600 italic">Ready to execute tests...</div>
               )}
-              
+
               {logs.map((log) => (
                 <div key={log.id} className="flex gap-2 animate-fadeIn" data-testid={`log-entry-${log.level}`}>
                   <span className="text-slate-500">[{log.timestamp}]</span>
@@ -246,18 +247,18 @@ test('AI generated login test', async ({ page }) => {
 
             {/* AI Analysis Panel */}
             {aiAnalysis && (
-               <div className="bg-slate-800 border-t border-slate-700 p-4 max-h-60 overflow-y-auto animate-slideUp" data-testid="ai-analysis-panel">
-                 <div className="flex items-center gap-2 mb-2 text-indigo-400 font-semibold text-sm">
-                   <Sparkles className="w-4 h-4" />
-                   AI Analysis
-                 </div>
-                 <div className="prose prose-invert prose-sm max-w-none text-slate-300">
-                   {/* Simple markdown rendering for demo purposes */}
-                   {aiAnalysis.split('\n').map((line, i) => (
-                     <p key={i} className="mb-1">{line}</p>
-                   ))}
-                 </div>
-               </div>
+              <div className="bg-slate-800 border-t border-slate-700 p-4 max-h-60 overflow-y-auto animate-slideUp" data-testid="ai-analysis-panel">
+                <div className="flex items-center gap-2 mb-2 text-indigo-400 font-semibold text-sm">
+                  <Sparkles className="w-4 h-4" />
+                  AI Analysis
+                </div>
+                <div className="prose prose-invert prose-sm max-w-none text-slate-300">
+                  {/* Simple markdown rendering for demo purposes */}
+                  {aiAnalysis.split('\n').map((line, i) => (
+                    <p key={i} className="mb-1">{line}</p>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         </div>

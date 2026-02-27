@@ -1,0 +1,5 @@
+# Blog Post Update
+
+- [x] Analyze [Blog.tsx](file:///c:/Users/AKANSHA/Personal_files/apps_built/AI_app/AI-TestMastery/pages/Blog.tsx) and [constants.ts](file:///c:/Users/AKANSHA/Personal_files/apps_built/AI_app/AI-TestMastery/constants.ts) to locate the blog posts data
+- [x] Add the new blog post titled "AI Testing: The Future of Quality Engineering and How to Migrate from Manual Testing" to `BLOG_POSTS` in [constants.ts](file:///c:/Users/AKANSHA/Personal_files/apps_built/AI_app/AI-TestMastery/constants.ts)
+- [ ] Fix typescript syntax error in the added blog post
