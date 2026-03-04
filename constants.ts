@@ -925,6 +925,526 @@ However — this is not the official or standard Playwright way to write API tes
 • Playwright MCP puts an AI-layer on top, letting you describe test intentions in natural language, which is exciting but not yet the foundational way for reliable regression suites.
 If you are a beginner, start with Playwright CLI API testing to learn core concepts. Once comfortable, you can explore Playwright MCP for AI-assisted workflows.
 `
+  },
+  {
+    id: 'ai-testing-healer-agent',
+    title: 'AI Testing with Playwright — The Healer Agent: Fixing Tests Automatically',
+    excerpt: 'End-to-end automated testing has long been one of the most valuable yet challenging parts of software quality assurance. Over the past decade, frameworks like Playwright have revolutionized how teams write fast, resilient UI tests. But even with best practices, test maintenance remains a major bottleneck.',
+    date: 'March 03, 2026',
+    author: 'Elena Fisher',
+    readTime: '5 min',
+    category: 'AI Agents',
+    content: `
+End-to-end automated testing has long been one of the most valuable yet challenging parts of software quality assurance. Over the past decade, frameworks like Playwright have revolutionized how teams write fast, resilient UI tests. But even with best practices, test maintenance remains a major bottleneck — particularly when UI changes cause tests to fail.
+Enter the Playwright Healer Agent — an AI-driven solution that automatically detects failing tests, analyzes the cause, and fixes them without manual intervention. In this blog, we’ll explore what the Healer Agent is, how it works, a real example where it fixes tests, and what this means for testing in professional environments.
+
+I.	What Is Playwright and Playwright Test Agents?
+Before we dive into healing tests, let’s briefly recap Playwright.
+Playwright is an open-source end-to-end testing framework for modern web apps. It lets you script UI flows, run them across browsers (Chromium, WebKit, Firefox), and includes test runner, assertions, isolation, parallel execution, and debugging tools. 
+With its 1.56 release (October 2024), Playwright introduced Test Agents — AI-powered helpers that can:
+•	Plan your automated test suite by exploring the app.
+•	Generate executable Playwright tests from human-friendly descriptions.
+•	Heal failing tests automatically when UI changes break them. 
+This blog focuses on the Healer Agent — the maintenance agent in this ecosystem.
+
+II.	Why Do Playwright Tests Break?
+Even the best Playwright tests break for several common reasons:
+1.	Locator/selector changes: e.g., an element’s CSS class or role is renamed.
+2.	UI redesigns: A button moves or a form input changes type.
+3.	Timing and assertion mismatches: Tests fail due to dynamic loading.
+4.	Environmental changes: Backend APIs change, affecting responses.
+Traditional maintenance forces engineers to manually update selectors, tweak tests, and re-run them — a repetitive activity that saps time and productivity.
+
+III.	What Is the Healer Agent?
+The Healer Agent is an AI test-maintenance agent built into Playwright Test Agents. Its job is to:
+•	Run your test suite
+•	Detect failing tests
+•	Analyze failures (DOM changes, locator mismatches, timing issues)
+•	Automatically update locators, selectors, or assertions
+•	Re-run tests to confirm the fix
+It does this without requiring manual edits to tests by engineers. 
+In short: the Healer Agent gives your Playwright tests self-healing capabilities.
+
+IV.	How the Healer Agent Works — Step by Step
+Here’s how the Healer Agent typically operates in an automated testing workflow:
+1. Test Execution and Failure Detection
+When you run your tests with the Healer Agent enabled, it executes the suite:
+npx playwright test --agent=healer
+The agent watches for failures just like a normal test runner.
+2. Failure Diagnosis
+For any failed test, the agent:
+•	Inspects console logs
+•	Captures DOM snapshots
+•	Looks at network activity
+•	Determines what part of the test broke
+•	Pinpoints the root cause (updated selector, missing element, etc.) 
+This mirrors what a senior QA engineer would do manually, only the agent does it programmatically.
+3. Intelligent Healing
+Based on the failure context, the Healer Agent will:
+•	Update locators to match new UI elements
+•	Adjust assertions that no longer match
+•	Add wait logic if timing caused the issue
+•	Retry steps automatically
+For example, a locator that used a textbox role might now target a combobox after a UI update — the agent can detect and update it accordingly. 
+4. Verification and Re-run
+After making an automatic update, the agent re-runs the test to ensure that the fix works.
+•	If successful, the test becomes green.
+•	If no safe fix is possible (e.g., real bug or missing backend endpoint), it marks the test as test.fixme() with a clear message. 
+This ensures the test suite remains stable even when issues cannot be fixed automatically.
+
+V.	A Real-Life Example: Healing a Search Flow Test
+Here’s a practical example that illustrates how the healer works:
+Before UI Change (Old App)
+await page.getByPlaceholder('Search products').fill('wallet');
+await page.getByRole('button', { name: 'Search' }).click();
+After App UI Update
+The UI was redesigned:
+•	Placeholder changed to "Find products"
+•	Button text changed to "Go"
+Your original test now fails because the selectors no longer match.
+Healer in Action
+With the Healer Agent enabled:
+1.	Detects failure: Locator not found due to changed placeholder and button name.
+2.	Analyzes DOM: Finds input by new placeholder and new button text.
+3.	Edits test code automatically:
+// Updated by Healer
+await page.getByPlaceholder('Find products').fill('wallet');
+await page.getByRole('button', { name: 'Go' }).click();
+4.	Re-runs test: Confirms it now passes successfully. 
+This kind of self-healing is powerful for codebases with frequent UI tweaks.
+
+VI.	Impact in Professional/QE Environments
+The Healer Agent is much more than a curiosity — in production contexts, it affects testing profoundly.
+✅ Reduced Manual Maintenance
+Test engineers spend less time updating selectors and repairing tests after every UI change. This frees up resources to focus on:
+•	Test strategy
+•	Exploratory testing
+•	Risk analysis
+•	Coverage gaps
+🧑💻 CI/CD Stability
+With self-healing tests running in CI/CD pipelines:
+•	Build failures due to brittle tests are reduced
+•	Releases are smoother and less blocked
+•	Automation becomes more reliable
+This significantly improves velocity and confidence in quality gates.
+📚 Better Collaboration Between QA & Dev
+The Healer Agent keeps tests up-to-date with true UI state without heavy back-and-forth between QA and developers. It supports smoother workflows in agile and DevOps teams.
+VII.	Still Requires Human Oversight
+Automated fixes are excellent, but not foolproof.
+•	AI may misinterpret intent (e.g., pick the “wrong” similar selector)
+•	Logical errors still need human review
+•	Maintaining test quality and stability still requires strategy
+Thus, reviewers should always inspect Healer commits before merging.
+
+VIII.	Best Practices When Using the Healer Agent
+To get maximum benefit:
+•	Use semantic locators, e.g., getByRole, getByText because they help the healer agent understand intent.
+•	Track healed changes in version control (review auto-fix patches).
+•	Combine with Playwright trace viewer to debug context.
+•	Run healer in CI/CD pipelines for automated test maintenance.
+•	Don’t treat the agent as a replacement for QA expertise, but as a powerful assistant.
+
+IX.	Summary
+The Playwright Healer Agent represents a major advancement in automated testing:
+•	It automatically fixes failing tests caused by UI changes.
+•	It reduces maintenance overhead, saving countless hours.
+•	It improves CI/CD stability by keeping test suites green.
+•	It complements human testers, not replaces them.
+This capability transforms testing workflows from reactive maintenance to proactive test evolution — and it’s a glimpse into how AI will continue reshaping QA at scale.
+
+🔗 For Further Reading
+🔹 Playwright official docs: <a href="https://playwright.dev/docs/intro" target="_blank" rel="noopener noreferrer" class="text-purple-600 dark:text-purple-400 hover:underline transition-colors duration-200">https://playwright.dev/docs/intro</a> 
+🔹 Playwright Test Agents (Healer included): <a href="https://playwright.dev/docs/test-agents" target="_blank" rel="noopener noreferrer" class="text-purple-600 dark:text-purple-400 hover:underline transition-colors duration-200">https://playwright.dev/docs/test-agents</a> 
+🔹 Example blog on healing tests automatically with the Healer Agent: <a href="https://medium.com/@madushikaranapana113/how-to-heal-failing-playwright-tests-automatically-with-the-healer-agent-d4e4999dad4d" target="_blank" rel="noopener noreferrer" class="text-purple-600 dark:text-purple-400 hover:underline transition-colors duration-200">https://medium.com/@madushikaranapana113/how-to-heal-failing-playwright-tests-automatically-with-the-healer-agent-d4e4999dad4d</a> 
+`
+  },
+  {
+    id: 'allure-reporting-playwright-ai',
+    title: 'Allure Reporting with Playwright and AI',
+    excerpt: 'Modern test automation is not only about writing test scripts. It is about traceability, transparency, actionable reporting, faster debugging, and confidence in releases. This is where Allure Report combined with Playwright becomes extremely powerful.',
+    date: 'March 04, 2026',
+    author: 'Community Contributor',
+    readTime: '4 min',
+    category: 'Playwright',
+    content: `
+# A Beginner-Friendly Guide with AI-Integrated Automation
+
+------------------------------------------------------------------------
+
+# 1. Introduction
+
+Modern test automation is not only about writing test scripts. It is
+about:
+
+-   Traceability
+-   Transparency
+-   Actionable reporting
+-   Faster debugging
+-   Confidence in releases
+
+This is where **Allure Report** combined with **Playwright** becomes
+extremely powerful.
+
+In this guide, we will:
+
+-   Understand Playwright reporting fundamentals
+-   Integrate Allure correctly (based strictly on official documentation)
+-   Add structured steps and attachments
+-   Use metadata, labels, and severity
+-   Understand parameterized test reporting
+-   Explore how AI can generate structured Playwright + Allure tests
+-   Apply enterprise-ready best practice
+
+All information in this article is based on:
+
+-   Official Playwright documentation
+-   Official Allure Playwright documentation
+-   Microsoft's Playwright ecosystem repositories
+
+------------------------------------------------------------------------
+
+# 2. What is Playwright?
+
+Playwright is a modern browser automation framework developed by
+Microsoft.
+
+Official documentation: <a href="https://playwright.dev/docs/intro" target="_blank" rel="noopener noreferrer" class="text-purple-600 dark:text-purple-400 hover:underline transition-colors duration-200">https://playwright.dev/docs/intro</a>
+
+Playwright supports:
+
+-   Chromium
+-   Firefox
+-   WebKit
+-   Headless and headed execution
+-   Parallel execution
+-   Built-in test runner (\`@playwright/test\`)
+-   Automatic waiting mechanisms
+
+Playwright already provides built-in reporters (list, line, HTML, JSON,
+etc.).
+However, when advanced visualization and reporting structure are
+required, Allure is commonly integrated.
+
+------------------------------------------------------------------------
+
+# 3. What is Allure Report?
+
+Allure Report is an open-source test reporting framework designed to
+generate rich, interactive HTML reports from raw test execution data.
+
+Official documentation: <a href="https://allurereport.org/docs/playwright/" target="_blank" rel="noopener noreferrer" class="text-purple-600 dark:text-purple-400 hover:underline transition-colors duration-200">https://allurereport.org/docs/playwright/</a>
+
+Allure works in two stages:
+
+1.  Test framework generates raw results in \`allure-results/\`
+2.  Allure CLI generates a visual HTML report in \`allure-report/\`
+
+Allure provides:
+
+-   Step breakdown
+-   Attachments (screenshots, logs, videos)
+-   Labels and metadata
+-   Severity levels
+-   Categorized failures
+-   Timeline view
+-   Historical trend analysis (when configured)
+
+------------------------------------------------------------------------
+
+# 4. Installing Playwright (Correct Setup)
+
+Initialize a project:
+
+\`\`\` bash
+npm init playwright@latest
+\`\`\`
+
+This installs:
+
+-   \`@playwright/test\`
+-   Browser binaries
+-   Example tests
+-   Default configuration
+
+------------------------------------------------------------------------
+
+# 5. Installing Allure Playwright Reporter
+
+Install the official reporter:
+
+\`\`\` bash
+npm install -D allure-playwright
+\`\`\`
+
+This package integrates Playwright's test runner with Allure's reporting
+lifecycle.
+
+------------------------------------------------------------------------
+
+# 6. Installing Allure CLI
+
+Install Allure CLI globally:
+
+\`\`\` bash
+npm install -g allure-commandline
+\`\`\`
+
+After installation, verify:
+
+\`\`\` bash
+allure --version
+\`\`\`
+
+------------------------------------------------------------------------
+
+# 7. Configuring Playwright to Use Allure
+
+Update \`playwright.config.ts\`:
+
+\`\`\` ts
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  reporter: [
+    ['list'],
+    ['allure-playwright']
+  ],
+});
+\`\`\`
+
+By default, results are stored in:
+
+    allure-results/
+
+------------------------------------------------------------------------
+
+# 8. Running Tests and Generating Reports
+
+Run tests:
+
+\`\`\` bash
+npx playwright test
+\`\`\`
+
+Generate Allure report:
+
+\`\`\` bash
+allure generate allure-results --clean -o allure-report
+\`\`\`
+
+Open the report:
+
+\`\`\` bash
+allure open allure-report
+\`\`\`
+
+------------------------------------------------------------------------
+
+# 9. Adding Allure Steps (Best Practice)
+
+Structured steps improve report readability.
+
+Example:
+
+\`\`\` ts
+import { test } from '@playwright/test';
+import { allure } from 'allure-playwright';
+
+test('Login flow', async ({ page }) => {
+
+  await allure.step('Open login page', async () => {
+    await page.goto('https://example.com');
+  });
+
+  await allure.step('Enter credentials', async () => {
+    await page.fill('#username', 'user');
+    await page.fill('#password', 'password');
+  });
+
+});
+\`\`\`
+
+Each step appears clearly in the Allure report.
+
+------------------------------------------------------------------------
+
+# 10. Attaching Screenshots
+
+Correct way to attach screenshot:
+
+\`\`\` ts
+await allure.attachment(
+  'Screenshot',
+  await page.screenshot(),
+  'image/png'
+);
+\`\`\`
+
+Best practice:
+
+-   Screenshot after major steps
+-   Screenshot on failure
+-   Avoid unnecessary duplication
+
+------------------------------------------------------------------------
+
+# 11. Allure Metadata, Labels, and Severity
+
+Allure supports metadata for classification.
+
+Example:
+
+\`\`\` ts
+import { test } from '@playwright/test';
+import { allure } from 'allure-playwright';
+
+test('Critical payment test', async ({ page }) => {
+  allure.severity('critical');
+  allure.epic('Checkout');
+  allure.feature('Payment');
+  allure.story('Credit Card Payment');
+
+  await page.goto('https://example.com');
+});
+\`\`\`
+
+Supported severity levels:
+
+-   trivial
+-   minor
+-   normal
+-   critical
+-   blocker
+
+These labels help categorize tests in the Allure dashboard under:
+
+-   Behaviors
+-   Features
+-   Stories
+
+------------------------------------------------------------------------
+
+# 12. Parameterized Tests in Allure
+
+Playwright supports parameterized tests using \`test.describe()\` or
+loops.
+
+Example:
+
+\`\`\` ts
+const users = ['user1', 'user2'];
+
+for (const user of users) {
+  test(\`Login test for \${user}\`, async ({ page }) => {
+    await page.goto('https://example.com');
+    await page.fill('#username', user);
+  });
+}
+\`\`\`
+
+Allure automatically reports each iteration as a separate test case.
+
+You can also attach parameters explicitly:
+
+\`\`\` ts
+allure.parameter('username', user);
+\`\`\`
+
+This ensures parameters are visible inside the Allure test details.
+
+------------------------------------------------------------------------
+
+# 13. AI-Integrated Automation with Playwright + Allure
+
+AI tools can assist in:
+
+-   Converting manual test cases into Playwright scripts
+-   Adding structured steps automatically
+-   Injecting explicit waits
+-   Adding Allure metadata consistently
+-   Generating documentation
+-   Enforcing reporting standards
+
+For example, AI agents can ensure:
+
+-   Every test has severity
+-   Every critical step has screenshot
+-   Every test generates \`allure-results\`
+-   Failures are logged properly
+
+AI improves:
+
+-   Consistency
+-   Speed of test generation
+-   Reporting quality
+-   Maintainability
+
+------------------------------------------------------------------------
+
+# 14. Enterprise Best Practices
+
+1.  Use explicit waits instead of timeouts.
+2.  Keep one logical flow per spec file.
+3.  Classify severity properly.
+4.  Use metadata consistently.
+5.  Attach screenshots meaningfully.
+6.  Avoid redundant logging outside Allure.
+7.  Version control your Playwright config.
+8.  Keep \`allure-results\` out of Git (add to .gitignore).
+
+------------------------------------------------------------------------
+
+# 15. Common Mistakes to Avoid
+
+❌ Forgetting to install Allure CLI\\\\
+❌ Generating report without \`--clean\`\\\\
+❌ Not attaching screenshots\\\\
+❌ Using \`waitForTimeout\` unnecessarily\\\\
+❌ Overusing attachments (slows report generation)
+
+------------------------------------------------------------------------
+
+# 16. Advantages of Using Allure with Playwright
+
+-   Rich visual HTML reports
+-   Clear step traceability
+-   Structured failure debugging
+-   Metadata-based filtering
+-   Better stakeholder communication
+-   Improved automation governance
+
+------------------------------------------------------------------------
+
+# 17. Limitations
+
+-   Requires CLI installation
+-   Adds extra report generation step
+-   Large attachments increase report size
+
+However, these are manageable trade-offs in enterprise environments.
+
+------------------------------------------------------------------------
+
+# 18. Conclusion
+
+Playwright provides modern, reliable browser automation.
+
+Allure enhances it with structured, interactive reporting.
+
+When combined with AI-driven automation practices, teams can:
+
+-   Generate consistent tests
+-   Enforce reporting discipline
+-   Reduce human error
+-   Improve debugging speed
+-   Increase release confidence
+
+This combination is highly effective in real-world enterprise QA
+environments.
+
+------------------------------------------------------------------------
+
+`
   }
 ];
 
@@ -980,7 +1500,7 @@ export const INTERVIEW_QUESTIONS: InterviewQuestion[] = [
   {
     id: 'q9',
     question: 'Walk through setting up Playwright MCP in VS Code and a sample AI prompt workflow.',
-    answer: 'Add to settings.json: `{"mcpServers": {"playwright": {"command": "npx", "args": ["@playwright/mcp@latest"]}}}`. Restart VS Code, then prompt: "Navigate to example.com, click \'Submit\', and snapshot." The agent chains tools like \`browser_navigate\` and \`browser_snapshot\` automatically.',
+    answer: 'Add to settings.json: `{ "mcpServers": { "playwright": { "command": "npx", "args": ["@playwright/mcp@latest"] } } }`. Restart VS Code, then prompt: "Navigate to example.com, click \'Submit\', and snapshot." The agent chains tools like \`browser_navigate\` and \`browser_snapshot\` automatically.',
     category: 'MCP'
   },
   {
