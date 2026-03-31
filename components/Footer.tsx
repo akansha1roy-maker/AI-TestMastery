@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Bot, Twitter, Github, Linkedin } from 'lucide-react';
+import { Bot, Github, Linkedin } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
@@ -24,9 +24,9 @@ const Footer: React.FC = () => {
             <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-200 tracking-wider uppercase mb-4">Learn</h3>
             <ul className="space-y-3">
               {/* All Courses link removed */}
-              <li><Link to="/courses/ai-testing-fundamentals" className="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 text-sm">Fundamentals</Link></li>
-              <li><Link to="/courses/playwright-automation" className="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 text-sm">Playwright</Link></li>
-              <li><Link to="/courses/testsprite-agent" className="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 text-sm">TestSprite Agents</Link></li>
+              <li><Link to="/blog" className="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 text-sm">Blog</Link></li>
+              <li><Link to="/tools" className="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 text-sm">Tools</Link></li>
+              <li><Link to="/prep" className="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 text-sm">Prep</Link></li>
             </ul>
           </div>
 
@@ -43,15 +43,11 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-200 tracking-wider uppercase mb-4">Connect</h3>
             <div className="flex space-x-4">
-              <a href="#" className="text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+              <a href="https://github.com/akansha1roy-maker" className="text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
                 <span className="sr-only">GitHub</span>
                 <Github className="h-6 w-6" />
               </a>
-              <a href="#" className="text-slate-400 dark:text-slate-500 hover:text-blue-400 transition-colors">
-                <span className="sr-only">Twitter</span>
-                <Twitter className="h-6 w-6" />
-              </a>
-              <a href="#" className="text-slate-400 dark:text-slate-500 hover:text-blue-700 transition-colors">
+              <a href="https://www.linkedin.com/in/akansha-roy-5a0abb353" className="text-slate-400 dark:text-slate-500 hover:text-blue-700 transition-colors">
                 <span className="sr-only">LinkedIn</span>
                 <Linkedin className="h-6 w-6" />
               </a>
