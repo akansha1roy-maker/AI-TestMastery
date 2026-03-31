@@ -178,6 +178,7 @@ test('AI generated login test', async ({ page }) => {
               onClick={() => { setCode('// Write your test code here...'); setLogs([]); setAiAnalysis(null); }}
               data-testid="reset-playground-button"
               className="p-2 hover:bg-slate-700 rounded-md text-slate-400 transition-colors" title="Reset Code"
+              aria-label="Reset Code"
             >
               <RotateCcw className="w-4 h-4" />
             </button>

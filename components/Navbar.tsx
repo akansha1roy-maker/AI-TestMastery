@@ -128,6 +128,7 @@ const Navbar: React.FC = () => {
               onClick={toggleTheme}
               data-testid="theme-toggle-mobile"
               className="p-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400"
+              aria-label="Toggle Theme"
             >
               <ThemeIcon />
             </button>
@@ -135,6 +136,7 @@ const Navbar: React.FC = () => {
               onClick={() => setIsOpen(!isOpen)}
               data-testid="mobile-menu-toggle"
               className="text-slate-600 dark:text-slate-300 hover:text-indigo-600 focus:outline-none"
+              aria-label={isOpen ? "Close Menu" : "Open Menu"}
             >
               {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>

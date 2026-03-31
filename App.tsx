@@ -101,7 +101,7 @@ const App: React.FC = () => {
       <div className="flex flex-col min-h-screen relative">
         <Background />
         <Navbar />
-        <div className="flex-grow">
+        <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/courses/:id" element={<CourseDetail />} />
@@ -113,7 +113,7 @@ const App: React.FC = () => {
             <Route path="/prep" element={<Prep />} />
             <Route path="/about" element={<div className="p-20 text-center">About Page Placeholder</div>} />
           </Routes>
-        </div>
+        </main>
         <Footer />
       </div>
     </Router>

@@ -83,7 +83,7 @@ const ToolDetail: React.FC = () => {
                 </article>
 
                 <div className="mt-12 p-6 bg-white/50 dark:bg-slate-900/50 backdrop-blur rounded-xl border border-slate-100 dark:border-slate-800">
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Why we recommend it</h3>
+                    <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Why we recommend it</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {tool.features.map((feature, i) => (
                         <div key={i} className="flex items-center gap-2 text-slate-700 dark:text-slate-300 text-sm">
@@ -111,7 +111,7 @@ const ToolDetail: React.FC = () => {
                                 </div>
                             </div>
                             <div className="p-6">
-                                <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-2">{relatedCourse.title}</h3>
+                                <h2 className="font-bold text-lg text-slate-900 dark:text-white mb-2">{relatedCourse.title}</h2>
                                 <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 line-clamp-3">{relatedCourse.description}</p>
                                 <Link 
                                     to={`/courses/${relatedCourse.id}`}
@@ -124,7 +124,7 @@ const ToolDetail: React.FC = () => {
                      )}
 
                     <div className="mt-6">
-                         <h4 className="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider mb-4">External Resources</h4>
+                         <h2 className="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider mb-4">External Resources</h2>
                          
                          {tool.docLink ? (
                             <a href={tool.docLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 rounded-lg bg-white/50 dark:bg-slate-800/50 hover:bg-white/80 dark:hover:bg-slate-800 transition-colors mb-2 text-slate-700 dark:text-slate-300 text-sm border border-slate-100 dark:border-slate-800 group">

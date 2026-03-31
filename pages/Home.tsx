@@ -57,7 +57,7 @@ const Home: React.FC = () => {
               <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center mb-6">
                 <Zap className="text-emerald-600 dark:text-emerald-400 w-6 h-6" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Velocity & Stability</h3>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Velocity & Stability</h2>
               <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
                 Move beyond flaky Selenium scripts. Learn Playwright for rock-solid execution and auto-waiting mechanisms.
               </p>
@@ -66,7 +66,7 @@ const Home: React.FC = () => {
               <div className="w-12 h-12 bg-violet-100 dark:bg-violet-900/30 rounded-lg flex items-center justify-center mb-6">
                 <Cpu className="text-violet-600 dark:text-violet-400 w-6 h-6" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Autonomous Agents</h3>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Autonomous Agents</h2>
               <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
                 Deploy TestSprite agents that explore your UI, find edge cases, and report bugs without writing a single line of test code.
               </p>
@@ -75,7 +75,7 @@ const Home: React.FC = () => {
               <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center mb-6">
                 <Shield className="text-indigo-600 dark:text-indigo-400 w-6 h-6" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Future-Proof Skills</h3>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Future-Proof Skills</h2>
               <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
                 Master MCP (Model Context Protocol) to build custom tooling that connects LLMs directly to your CI/CD pipeline.
               </p>

@@ -109,7 +109,7 @@ const BlogDetail: React.FC = () => {
         </article>
 
         <div className="mt-16 pt-8 border-t border-slate-100 dark:border-slate-800">
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Share this article</h3>
+          <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Share this article</h2>
           <div className="flex gap-4">
             <button className="px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg text-slate-600 dark:text-slate-300 text-sm font-medium transition-colors shadow-sm">Twitter</button>
             <button className="px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg text-slate-600 dark:text-slate-300 text-sm font-medium transition-colors shadow-sm">LinkedIn</button>

@@ -172,7 +172,7 @@ const Prep: React.FC = () => {
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 mb-2 inline-block">
                     {item.category}
                   </span>
-                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white leading-tight">{item.question}</h3>
+                  <h2 className="text-lg font-semibold text-slate-900 dark:text-white leading-tight">{item.question}</h2>
                 </div>
                 <div className="mt-1 flex-shrink-0 text-slate-400">
                   {openQuestionId === item.id ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}

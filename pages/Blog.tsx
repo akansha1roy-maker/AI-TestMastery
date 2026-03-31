@@ -114,7 +114,7 @@ const Blog: React.FC = () => {
                   <div className="p-2 bg-indigo-100 dark:bg-indigo-900/50 rounded-lg">
                     <PenTool className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">Create New Article</h3>
+                  <h2 className="text-xl font-bold text-slate-900 dark:text-white">Create New Article</h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">

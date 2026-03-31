@@ -102,7 +102,7 @@ const CourseDetail: React.FC = () => {
         <div className="p-4">
           {course.modules.map(module => (
             <div key={module.id} className="mb-6">
-              <h3 className="text-sm font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3 px-2">{module.title}</h3>
+              <h2 className="text-sm font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3 px-2">{module.title}</h2>
               <div className="space-y-1">
                 {module.lessons.map(lesson => (
                   <button
